@@ -1,0 +1,7 @@
+# Exclude directories, that might contain large or binary files.
+image/sources/*
+volumes/*
+
+# Do not exclude .gitkeep placehold file for empty directories
+!.gitkeep
+!README.md
