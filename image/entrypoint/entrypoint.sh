@@ -2,7 +2,7 @@
 
 # Application shutdown, this is called after the container receives a 'stop' 
 # command and sends a SIGTERM(15) to the entrypoint.sh script (PID 1).
-function StopContainer {
+StopContainer() {
 
   # Run the application shutdown scripts
   # NOTE: the total runtime of the scripts should not take more than 10 seconds, due to a docker timer.
@@ -15,8 +15,8 @@ function StopContainer {
 }
 
 # Define handlers for system traps:
-# - TERM or SIGTEM for a clean exit
-trap StopContainer SIGTERM
+# - TERM or SIGTEM (signal 15) for a clean exit
+trap StopContainer 15
 
 # Run application startup scripts
 START_SCRIPTS=/opt/entrypoint/start.d
