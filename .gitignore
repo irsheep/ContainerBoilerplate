@@ -1,3 +1,5 @@
+conf/settings.env
+
 # Exclude directories, that might contain large or binary files.
 image/sources/*
 volumes/*

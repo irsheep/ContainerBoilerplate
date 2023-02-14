@@ -15,6 +15,12 @@ if DEFINED PRIVATE_REGISTRY (
   set IMAGE_SOURCE=%PRIVATE_REGISTRY%/%IMAGE_NAME%
 )
 
-docker build ^
--t %IMAGE_SOURCE%:%IMAGE_TAG% ^
--f conf/Dockerfile .
+docker run ^
+-d ^
+--rm ^
+-v %cd%\volumes:/some/path ^
+-p 8080:80 ^
+--name %CONTAINER_NAME%-dev ^
+%IMAGE_SOURCE%:%IMAGE_TAG%
+
+docker exec -it %CONTAINER_NAME%-dev /bin/sh

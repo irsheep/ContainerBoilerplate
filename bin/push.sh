@@ -13,6 +13,5 @@ for f in `cat conf/settings.env`; do export $f; done
 export IMAGE_SOURCE=${IMAGE_NAME}
 [ ${PRIVATE_REGISTRY} ] && export IMAGE_SOURCE=${PRIVATE_REGISTRY}/${IMAGE_NAME}
 
-docker build \
--t ${IMAGE_SOURCE}:${IMAGE_TAG} \
--f conf/Dockerfile .
+docker tag ${IMAGE_SOURCE}:${IMAGE_TAG} ${REMOTE_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+docker push ${REMOTE_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}

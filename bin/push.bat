@@ -1,4 +1,4 @@
-@echo off
+echo off
 
 :: Create the default settings.env if it does not exist
 if NOT EXIST conf\settings.env (
@@ -15,6 +15,5 @@ if DEFINED PRIVATE_REGISTRY (
   set IMAGE_SOURCE=%PRIVATE_REGISTRY%/%IMAGE_NAME%
 )
 
-docker build ^
--t %IMAGE_SOURCE%:%IMAGE_TAG% ^
--f conf/Dockerfile .
+docker tag %IMAGE_SOURCE%:%IMAGE_TAG%:%IMAGE_TAG% %REMOTE_REGISTRY%/%IMAGE_NAME%:%IMAGE_TAG%
+docker push %REMOTE_REGISTRY%/%IMAGE_NAME%:%IMAGE_TAG%
