@@ -1,19 +1,31 @@
-echo off
+@echo off
 
-:: Create the default settings.env if it does not exist
-if NOT EXIST conf\settings.env (
-  echo settings.env not found, using defaults.
-  copy conf\settings.default.env conf\settings.env
+if NOT EXIST .env (
+  echo Environment file .env not found.
+  exit 1
 )
 
-:: Load container setup variables
-for /F "usebackq" %%i in (conf\settings.env) do set %%i
+:: Load .env as variables
+for /F "usebackq delims=" %%i in (`type .env ^| find /v "#"`) do set %%i
 
-:: Define the image source
-set IMAGE_SOURCE=%IMAGE_NAME%
-if DEFINED PRIVATE_REGISTRY (
-  set IMAGE_SOURCE=%PRIVATE_REGISTRY%/%IMAGE_NAME%
-)
+:: Tag the 'current' image with the 'latest' tag on the local registry
+docker tag ^
+  %DOCKER_IMAGE_NAME%:%DOCKER_IMAGE_TAG% ^
+  %DOCKER_IMAGE_NAME%:latest
 
-docker tag %IMAGE_SOURCE%:%IMAGE_TAG%:%IMAGE_TAG% %REMOTE_REGISTRY%/%IMAGE_NAME%:%IMAGE_TAG%
-docker push %REMOTE_REGISTRY%/%IMAGE_NAME%:%IMAGE_TAG%
+:: Tag the current image to the remote registry
+docker tag ^
+  %DOCKER_IMAGE_NAME%:%DOCKER_IMAGE_TAG% ^
+  %DOCKER_REMOTE_REGISTRY%/%DOCKER_IMAGE_NAME%:%DOCKER_IMAGE_TAG%
+
+:: Push the 'current' image to the remote registry
+docker push ^
+  %DOCKER_REMOTE_REGISTRY%/%DOCKER_IMAGE_NAME%:%DOCKER_IMAGE_TAG%
+
+:: Links the 'current' tag to the 'latest' tag in the remote registry
+docker tag ^
+  %DOCKER_REMOTE_REGISTRY%/%DOCKER_IMAGE_NAME%:%DOCKER_IMAGE_TAG% ^
+  %DOCKER_REMOTE_REGISTRY%/%DOCKER_IMAGE_NAME%:latest
+
+:: Update the latest tag on the remote registry
+docker push %DOCKER_REMOTE_REGISTRY%/%DOCKER_IMAGE_NAME%:latest

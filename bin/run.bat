@@ -1,23 +1,16 @@
 @echo off
 
-:: Create the default settings.env if it does not exist
-if NOT EXIST conf\settings.env (
-  echo settings.env not found, using defaults.
-  copy conf\settings.default.env conf\settings.env
+if NOT EXIST .env (
+  echo Environment file .env not found.
+  exit 1
 )
 
-:: Load container setup variables
-for /F "usebackq" %%i in (conf\settings.env) do set %%i
-
-:: Define the image source
-set IMAGE_SOURCE=%IMAGE_NAME%
-if DEFINED PRIVATE_REGISTRY (
-  set IMAGE_SOURCE=%PRIVATE_REGISTRY%/%IMAGE_NAME%
-)
+:: Load .env as variables
+for /F "usebackq delims=" %%i in (`type .env ^| find /v "#"`) do set %%i
 
 docker run ^
--d ^
--v %cd%\volumes:/some/path ^
--p 80:80 ^
---name %CONTAINER_NAME% ^
-%IMAGE_SOURCE%:%IMAGE_TAG%
+  -it ^
+  -v %cd%\volumes\dir:/some/path ^
+  -p 8080:80 ^
+  --name %CONTAINER_NAME% ^
+  %DOCKER_IMAGE_NAME%:%DOCKER_IMAGE_TAG%

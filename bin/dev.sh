@@ -1,24 +1,17 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
-# Create the default settings.env if it does not exist
-if [ ! -f conf/settings.env ]; then
-  echo settings.env not found, using defaults.
-  cp conf/settings.default.env conf/settings.env
-fi
+[ $(id -u) -ne 0 ] && echo This script must run as root && exit 1
 
-# Load container setup variables
-for f in `cat conf/settings.env`; do export $f; done
-
-# Define the image source
-export IMAGE_SOURCE=${IMAGE_NAME}
-[ ${PRIVATE_REGISTRY} ] && export IMAGE_SOURCE=${PRIVATE_REGISTRY}/${IMAGE_NAME}
+# Load .env as variables
+[ ! -f .env ] && echo Environment file .env not found. && exit 2
+for f in `cat .env | grep -vE "^#"`; do export ${f}; done
 
 docker run \
--d \
---rm \
--v ./volumes:/some/path \
--p 8080:80 \
---name ${CONTAINER_NAME}-dev \
-${IMAGE_SOURCE}:${IMAGE_TAG}
+  -d \
+  --rm \
+  -v ./volumes/dir:/some/path \
+  -p 8080:80 \
+  --name ${CONTAINER_NAME}-dev \
+  ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
 
 docker exec -it ${CONTAINER_NAME}-dev /bin/sh

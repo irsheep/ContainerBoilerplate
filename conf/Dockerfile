@@ -1,8 +1,11 @@
 FROM alpine
 
-# Copy entrypoint scripts to the container and 
-COPY image/entrypoint /opt/entrypoint
-RUN chmod 755 -R /opt/entrypoint/*
+# Startup environment and configuration
+WORKDIR /opt/scripts
+COPY --chmod=755 image/scripts ./
+COPY --chmod=755 image/entrypoint.sh /
+
+WORKDIR /opt
 
 # Container entrypoint
-ENTRYPOINT [ "/opt/entrypoint/entrypoint.sh" ]
+ENTRYPOINT [ "/entrypoint.sh" ]

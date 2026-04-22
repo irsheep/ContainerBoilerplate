@@ -1,0 +1,27 @@
+services:
+  service_a:
+    image: ${DOCKER_IMAGE_NAME}:latest
+    container_name: ${CONTAINER_NAME}
+    # depends_on:
+    #   database:
+    #     condition: service_healthy
+    # ports:
+    #   - 8080:80
+    # networks:
+    #   - mynetwork
+    # volumes:
+    #   - ${CONTAINER_ROOT}/volumes/dir1:/opt/dir1
+    #   - dir2:/opt/dir2
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:80"]
+    #   interval: 1m
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 30s
+    #   start_interval: 5s
+
+# networks:
+#   mynetwork:
+
+# volumes:
+#   dir2:

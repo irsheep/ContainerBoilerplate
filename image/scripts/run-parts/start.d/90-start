@@ -1,0 +1,6 @@
+#!/bin/sh
+
+echo run-parts start script
+
+# Simulate a running service/application
+tail -f /dev/null & echo $! > /tmp/process.pid
