@@ -1,9 +1,13 @@
 #!/usr/bin/env sh
 
+START_SCRIPT=${EP_START_SCRIPT:-start}
+STOP_SCRIPT=${EP_STOP_SCRIPT:-stop}
 SCRIPTS_DIR=${EP_SCRIPTS_DIR:-/opt/scripts}
 RUNPARTS_DIR=${EP_RUNPARTS_DIR:-${SCRIPTS_DIR}/run-parts}
 
 echo Entrypoint started:
+echo - START_SCRIPT ${START_SCRIPT}
+echo - STOP_SCRIPT ${STOP_SCRIPT}
 echo - SCRIPTS_DIR ${SCRIPTS_DIR}
 echo - RUNPARTS_DIR ${RUNPARTS_DIR}
 echo
@@ -44,10 +48,10 @@ f_exit() {
   echo Stopping container
 
   # Run the container stop scripts.
-  f_run_scripts stop
+  f_run_scripts ${STOP_SCRIPT}
 
   # Last thing to call, add cleanup above this.
-  exit 0
+  # exit 0
 }
 
 # Define handlers for system traps:
@@ -55,7 +59,7 @@ f_exit() {
 trap f_exit TERM
 
 # Run the container start scripts.
-f_run_scripts start
+f_run_scripts ${START_SCRIPT}
 
 # If the container is invoked with a command (CMD), then execute the command
 # otherwise loop until the container is terminated.
